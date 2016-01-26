@@ -1,0 +1,15 @@
+{
+	"name": "radekhubner/prewtex",
+	"description": "Smart extensions for PrestaShop.",
+	"homepage": "",
+	"authors": [
+		{
+			"name": "Radek Hübner",
+			"homepage": "http://myapp.cz"
+		}
+	],
+	"require": {
+		"php": ">= 5.3.7",
+		"tracy/tracy": "~2.3.0"
+	}
+}
