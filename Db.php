@@ -28,8 +28,7 @@ if (file_exists(_PS_ROOT_DIR_ . '/config/settings.inc.php')) {
 	include_once(_PS_ROOT_DIR_ . '/config/settings.inc.php');
 }
 
-use Tracy\Debugger,
-	Prewtex\DatabasePanel;
+use Prewtex\DatabasePanel;
 
 /**
  * Class Db
@@ -55,9 +54,12 @@ abstract class Db extends DbCore
 		parent::__construct($server, $user, $password, $database, $connect);
 
 		global $dbDiagnostics;
-		$this->dbDiagnostics = $dbDiagnostics;
-		$this->dbDiagnostics->host = $server;
-		$this->dbDiagnostics->dbName = $database;
+
+		if (isset($dbDiagnostics)) {
+			$this->dbDiagnostics = $dbDiagnostics;
+			$this->dbDiagnostics->host = $server;
+			$this->dbDiagnostics->dbName = $database;
+		}
 	}
 
 
@@ -70,6 +72,10 @@ abstract class Db extends DbCore
 	 */
 	public function query($sql)
 	{
+		if (!isset($this->dbDiagnostics)) {
+			return parent::query($sql);
+		}
+
 		$source = NULL;
 		foreach (debug_backtrace(FALSE) as $row) {
 			if (isset($row['file'])) {
@@ -91,13 +97,13 @@ abstract class Db extends DbCore
 			}
 		}
 
-		Debugger::timer('database'); // Start timer for query
+		\Tracy\Debugger::timer('database'); // Start timer for query
 
 		parent::query($sql);
 
 		$this->displayError($sql);
 
-		$this->dbDiagnostics->totalTime += $time = Debugger::timer('database');
+		$this->dbDiagnostics->totalTime += $time = Tracy\Debugger::timer('database');
 
 		$this->dbDiagnostics->queries[] = array(
 			"sql" => $sql,
@@ -116,8 +122,15 @@ abstract class Db extends DbCore
 	 */
 	public function displayError($sql = false)
 	{
-		if ($this->getNumberError()) {
-			throw new \Exception($this->getMsgError() . $sql);
+		if (!isset($this->dbDiagnostics)) {
+
+			parent::displayError($sql);
+
+		} else {
+
+			if ($this->getNumberError()) {
+				throw new \Exception($this->getMsgError() . $sql);
+			}
 		}
 	}
 }
