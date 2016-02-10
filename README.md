@@ -11,7 +11,7 @@ This is a small extension that adds [nette/tracy](https://github.com/nette/tracy
 ### How to edit ``` index.php ``` in root?
 ```
 $approvedIPs = ["216.58.211.36"]; // Array or string, no required
-$emails = "mail@example.com" // Must be a string, no required
+$emails = "mail@example.com"; // Must be a string, no required
 require __DIR__ . "/prewtex/bootstrap.php";
 
 // Your code here
