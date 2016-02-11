@@ -4,7 +4,7 @@ This is a small extension that adds [nette/tracy](https://github.com/nette/tracy
 
 ## How to use?
 1. Clone this repository to ``` /prewtex/ ``` in root folder of your PrestaShop
-2. Edit your file ``` index.php ``` in root folder
+2. Edit your file ``` index.php ```  in the root folder and in the admin folder (eg. admin1234)
 3. Copy [Db.php](https://bitbucket.org/radekhubner/prewtex/src/0d3fead93a6c/Db.php) to ``` /override/classes/db/ ```
 4. Delete ``` /cache/class_index.php ```
 
