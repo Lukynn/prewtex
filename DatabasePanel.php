@@ -82,7 +82,7 @@ class DatabasePanel implements Tracy\IBarPanel
 			#nette-debug .DatabasePanel-source { color: #125EAE !important; }
 			#nette-debug DatabasePanel tr table { margin: 8px 0; max-height: 150px; overflow:auto }
 			#tracy-debug td.DatabasePanel-sql { background: white !important}
-			#tracy-debug .DatabasePanel-source { color: #125EAE !important; }
+			#tracy-debug .DatabasePanel-source { color: #125EAE !important; cursor: pointer !important; }
 			#tracy-debug DatabasePanel tr table { margin: 8px 0; max-height: 150px; overflow:auto }
 		</style>";
 	}
@@ -96,7 +96,7 @@ class DatabasePanel implements Tracy\IBarPanel
 		$s = "";
 		foreach ($this->queries as $query) {
 			$s .= "
-				<tr>
+				<tr class='".(str_replace(".", "_", basename($query["source"]["file"]))).$query["source"]["line"]."' onclick='filterTracyFiles(\"".(str_replace(".", "_", basename($query["source"]["file"]))).$query["source"]["line"]."\")'>
 					<td>" . sprintf("%0.3f", $query["time"] * 1000) . "</td>" .
 					"<td class=\"DatabasePanel-sql\">" .
 						$query["sql"] .
@@ -108,6 +108,21 @@ class DatabasePanel implements Tracy\IBarPanel
 					</td>
 				</tr>";
 		}
-		return "<table><tr><th>ms</th><th>SQL Statement</th></tr>" . $s . "</table>";
+
+		$script = "
+			<script>
+				function filterTracyFiles(sql_class) {
+					if ($('.DatabasePanel').find('tr.'+sql_class).hasClass('filtered')) {
+						$('.DatabasePanel').find('tr').show();
+						$('.DatabasePanel').find('tr').removeClass('filtered');
+					} else {
+						$('.DatabasePanel').find('tr').hide();
+						$('.DatabasePanel').find('tr.'+sql_class).show().addClass('filtered');
+					}
+				}
+			</script>
+		";
+
+		return "<table><tr><th>ms</th><th>SQL Statement</th></tr>" . $s . "</table>" . $script;
 	}
 }
